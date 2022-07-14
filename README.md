@@ -14,10 +14,10 @@ There is a work-in-progress microsite which contains a tutorial walkthrough of t
 found a permanent home yet, and for now can most easily be accessed by running,
 
 ```
-sbt docs/previewSite
+sbt docs/tlSitePreview
 ```
 
-and then browsing to [localhost:4000](http://localhost:4000).
+and then browsing to [localhost:4242](http://localhost:4242).
 
 ## How to Contribute
 

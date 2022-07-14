@@ -1,11 +1,7 @@
 # Grackle
 
-@@@index
-
-* [Tutorial](tutorial/index.md)
-* [Reference](reference/index.md)
-
-@@@
+* [Tutorial](tutorial/README.md)
+* [Reference](reference/README.md)
 
 ## Overview
 
@@ -15,19 +11,15 @@
 - Grackle embraces the [Scala Code of Conduct](http://scala-lang.org/conduct.html).
 - **Grackle is pre-release software!** Code and documentation are under active development!
 
-Grackle is published for Scala $scala-versions$ and can be included in your project thus:
+Grackle is published for Scala 2.13 and 3 and can be included in your project thus:
 
-@@dependency[sbt,Maven,Gradle] {
-  group="$org$"
-  artifact="$core-dep$"
-  version="$version$"
-}
-
-@@dependencies { projectId="core" }
+```scala
+libraryDependencies += "edu.gemini" %% "gsp-graphql-core" % "@VERSION@"
+```
 
 ## How to Learn
 
-To learn about Grackle please read the @ref:[Tutorial](tutorial/index.md) and maybe peruse the @ref:[Reference](tutorial/index.md) material.
+To learn about Grackle please read the [Tutorial](tutorial/README.md) and maybe peruse the [Reference](tutorial/README.md) material.
 
 ## How to Contribute
 

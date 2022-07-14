@@ -78,9 +78,6 @@ lazy val `gsp-graphql` = project.in(file("."))
   .enablePlugins(NoPublishPlugin)
   .aggregate(modules:_*)
   .disablePlugins(RevolverPlugin)
-  .settings(
-    makeSite := { (docs / makeSite).value }
-  )
 
 lazy val core = project
   .in(file("modules/core"))
@@ -221,16 +218,5 @@ lazy val profile = project
   )
 
 lazy val docs = project
-  .in(file("docs"))
-  .enablePlugins(ParadoxSitePlugin)
-  .settings(
-    paradoxTheme         := Some(builtinParadoxTheme("generic")),
-    previewLaunchBrowser := false,
-    paradoxProperties ++= Map(
-      "scala-versions"          -> (core / crossScalaVersions).value.map(CrossVersion.partialVersion).flatten.map(_._2).mkString("2.", "/", ""),
-      "org"                     -> organization.value,
-      "scala.binary.version"    -> s"2.${CrossVersion.partialVersion(scalaVersion.value).get._2}",
-      "core-dep"                -> s"${(core / name).value}_2.${CrossVersion.partialVersion(scalaVersion.value).get._2}",
-      "version"                 -> version.value
-    )
-  )
+  .in(file("site"))
+  .enablePlugins(TypelevelSitePlugin)

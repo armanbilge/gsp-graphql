@@ -20,7 +20,7 @@ val shapeless2Version           = "2.3.10"
 val shapeless3Version           = "3.1.0"
 val sourcePosVersion            = "1.1.0"
 val testContainersVersion       = "0.40.12"
-val typenameVersion             = "1.0.0"
+val typenameVersion             = "1.1.0"
 
 val Scala2 = "2.13.10"
 val Scala3 = "3.2.2"
@@ -64,28 +64,25 @@ lazy val commonSettings = Seq(
   ))
 )
 
-lazy val modules: List[ProjectReference] = List(
-  core,
-  circe,
-  sql,
-  doobie,
-  skunk,
-  generic,
-  demo,
-  benchmarks,
-  profile
-)
-
-lazy val `gsp-graphql` = project.in(file("."))
-  .settings(commonSettings)
-  .enablePlugins(NoPublishPlugin)
-  .aggregate(modules:_*)
+lazy val `gsp-graphql` = tlCrossRootProject
+  .aggregate(
+    core,
+    circe,
+    sql,
+    doobie,
+    skunk,
+    generic,
+    demo,
+    benchmarks,
+    profile
+  )
   .disablePlugins(RevolverPlugin)
   .settings(
     makeSite := { (docs / makeSite).value }
   )
 
-lazy val core = project
+lazy val core = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/core"))
   .enablePlugins(AutomateHeaderPlugin)
   .disablePlugins(RevolverPlugin)
@@ -105,7 +102,8 @@ lazy val core = project
       )
   )
 
-lazy val circe = project
+lazy val circe = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/circe"))
   .enablePlugins(AutomateHeaderPlugin)
   .disablePlugins(RevolverPlugin)
@@ -115,7 +113,8 @@ lazy val circe = project
     name := "gsp-graphql-circe",
   )
 
-lazy val sql = project
+lazy val sql = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/sql"))
   .enablePlugins(AutomateHeaderPlugin)
   .disablePlugins(RevolverPlugin)
@@ -136,7 +135,7 @@ lazy val doobie = project
   .in(file("modules/doobie-pg"))
   .enablePlugins(AutomateHeaderPlugin)
   .disablePlugins(RevolverPlugin)
-  .dependsOn(sql % "test->test;compile->compile", circe)
+  .dependsOn(sql.jvm % "test->test;compile->compile", circe.jvm)
   .settings(commonSettings)
   .settings(
     name := "gsp-graphql-doobie-pg",
@@ -148,7 +147,8 @@ lazy val doobie = project
     )
   )
 
-lazy val skunk = project
+lazy val skunk = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/skunk"))
   .enablePlugins(AutomateHeaderPlugin)
   .disablePlugins(RevolverPlugin)
@@ -164,7 +164,8 @@ lazy val skunk = project
     )
   )
 
-lazy val generic = project
+lazy val generic = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/generic"))
   .enablePlugins(AutomateHeaderPlugin)
   .disablePlugins(RevolverPlugin)
@@ -182,7 +183,7 @@ lazy val generic = project
 lazy val demo = project
   .in(file("demo"))
   .enablePlugins(NoPublishPlugin, AutomateHeaderPlugin)
-  .dependsOn(core, generic, doobie)
+  .dependsOn(core.jvm, generic.jvm, doobie)
   .settings(commonSettings)
   .settings(
     name := "gsp-graphql-demo",
@@ -203,13 +204,13 @@ lazy val demo = project
 
 lazy val benchmarks = project
   .in(file("benchmarks"))
-  .dependsOn(core)
+  .dependsOn(core.jvm)
   .enablePlugins(NoPublishPlugin, JmhPlugin)
 
 lazy val profile = project
   .in(file("profile"))
   .enablePlugins(NoPublishPlugin)
-  .dependsOn(core)
+  .dependsOn(core.jvm)
   .dependsOn(doobie)
   .settings(commonSettings)
   .settings(
@@ -234,10 +235,10 @@ lazy val docs = project
     paradoxTheme         := Some(builtinParadoxTheme("generic")),
     previewLaunchBrowser := false,
     paradoxProperties ++= Map(
-      "scala-versions"          -> (core / crossScalaVersions).value.map(CrossVersion.partialVersion).flatten.map(_._2).mkString("2.", "/", ""),
+      "scala-versions"          -> (core.jvm / crossScalaVersions).value.map(CrossVersion.partialVersion).flatten.map(_._2).mkString("2.", "/", ""),
       "org"                     -> organization.value,
       "scala.binary.version"    -> s"2.${CrossVersion.partialVersion(scalaVersion.value).get._2}",
-      "core-dep"                -> s"${(core / name).value}_2.${CrossVersion.partialVersion(scalaVersion.value).get._2}",
+      "core-dep"                -> s"${(core.jvm / name).value}_2.${CrossVersion.partialVersion(scalaVersion.value).get._2}",
       "version"                 -> version.value
     )
   )
